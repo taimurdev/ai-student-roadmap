@@ -1,0 +1,128 @@
+.roadmap-page{
+
+  min-height:100vh;
+  padding:80px 20px;
+  background:#f8fafc;
+
+}
+
+
+.roadmap-container{
+
+  max-width:1000px;
+  margin:auto;
+
+}
+
+
+.roadmap-container h1{
+
+  text-align:center;
+  font-size:42px;
+
+}
+
+
+.roadmap-container > p{
+
+  text-align:center;
+  color:#64748b;
+  margin-bottom:40px;
+
+}
+
+
+
+.career-header{
+
+  background:#2563eb;
+  color:white;
+  padding:40px;
+  border-radius:25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+}
+
+
+
+.match-score{
+
+  background:white;
+  color:#2563eb;
+  padding:20px;
+  border-radius:15px;
+  font-size:30px;
+  font-weight:bold;
+  text-align:center;
+
+}
+
+
+.match-score span{
+
+  display:block;
+  font-size:14px;
+
+}
+
+
+
+.description{
+
+  background:white;
+  padding:30px;
+  margin-top:30px;
+  border-radius:20px;
+
+}
+
+
+
+.title{
+
+  margin-top:40px;
+
+}
+
+
+
+.skills-container{
+
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+
+}
+
+
+
+.skill-card{
+
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+
+}
+
+
+
+.timeline{
+
+  display:grid;
+  gap:20px;
+
+}
+
+
+
+.timeline-card{
+
+  background:white;
+  padding:25px;
+  border-radius:15px;
+
+}

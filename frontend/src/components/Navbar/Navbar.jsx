@@ -4,7 +4,7 @@ const Navbar = () => {
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
+        
         <Link
           to="/"
           className="text-2xl font-bold text-blue-600"
@@ -13,7 +13,6 @@ const Navbar = () => {
         </Link>
 
         <div className="flex items-center gap-6">
-
           <Link to="/" className="hover:text-blue-600">
             Home
           </Link>
@@ -32,9 +31,7 @@ const Navbar = () => {
           >
             Login
           </Link>
-
         </div>
-
       </div>
     </nav>
   );
