@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Quiz.css";
 
 const questions = [
@@ -41,28 +42,21 @@ const questions = [
   },
 ];
 
-
 const Quiz = () => {
-
   const navigate = useNavigate();
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
-
   const [selectedAnswer, setSelectedAnswer] = useState("");
-
   const [answers, setAnswers] = useState([]);
-
+  const [loading, setLoading] = useState(false);
 
   const question = questions[currentQuestion];
 
-
-  const handleNext = () => {
-
+  const handleNext = async () => {
     if (!selectedAnswer) {
-      alert("Please select an option first");
+      alert("Please select an option first.");
       return;
     }
-
 
     const updatedAnswers = [
       ...answers,
@@ -72,122 +66,114 @@ const Quiz = () => {
       },
     ];
 
-
     setAnswers(updatedAnswers);
 
-
+    // Next Question
     if (currentQuestion < questions.length - 1) {
-
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer("");
+      return;
+    }
 
-    } else {
+    try {
+      setLoading(true);
 
+      const token = localStorage.getItem("token");
 
-      localStorage.setItem(
-        "quizAnswers",
-        JSON.stringify(updatedAnswers)
+      // Save Quiz
+      await axios.post(
+        "http://localhost:5000/api/quiz",
+        {
+          answers: updatedAnswers,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
+      // Generate Roadmap
+      await axios.post(
+        "http://localhost:5000/api/roadmap",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      alert("Roadmap Generated Successfully 🚀");
 
       navigate("/roadmap");
 
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+        "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
     }
-
   };
-
 
   return (
     <section className="quiz">
-
       <div className="quiz-container">
 
-
-        <h1>
-          Career Assessment 🚀
-        </h1>
-
+        <h1>Career Assessment 🚀</h1>
 
         <div className="progress">
-
           <div
             className="progress-bar"
             style={{
-              width:
-              `${((currentQuestion + 1) / questions.length) * 100}%`
+              width: `${((currentQuestion + 1) / questions.length) * 100}%`,
             }}
           ></div>
-
         </div>
-
 
         <p>
           Question {currentQuestion + 1} of {questions.length}
         </p>
 
-
-
         <div className="quiz-card">
-
-
-          <h2>
-            {question.question}
-          </h2>
-
+          <h2>{question.question}</h2>
 
           <div className="options">
-
-            {question.options.map((option,index)=>(
-
+            {question.options.map((option, index) => (
               <button
-
                 key={index}
-
                 className={
                   selectedAnswer === option
-                  ? "selected"
-                  : ""
+                    ? "selected"
+                    : ""
                 }
-
-                onClick={() =>
-                  setSelectedAnswer(option)
-                }
-
+                onClick={() => setSelectedAnswer(option)}
               >
-
                 {option}
-
               </button>
-
             ))}
-
-
           </div>
-
-
         </div>
-
-
 
         <button
           className="next-btn"
           onClick={handleNext}
+          disabled={loading}
         >
-
-          {
-            currentQuestion === questions.length - 1
+          {loading
+            ? "Generating Roadmap..."
+            : currentQuestion === questions.length - 1
             ? "Generate Roadmap 🚀"
-            : "Next →"
-          }
-
+            : "Next →"}
         </button>
 
-
       </div>
-
     </section>
   );
 };
-
 
 export default Quiz;

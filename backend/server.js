@@ -3,10 +3,13 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const connectDB = require("./config/db");
+
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const quizRoutes = require("./routes/quizRoutes");
+const roadmapRoutes = require("./routes/roadmapRoutes");
+const progressRoutes = require("./routes/progressRoutes");
 
 dotenv.config();
 
@@ -26,6 +29,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/quiz", quizRoutes);
+app.use("/api/roadmap", roadmapRoutes);
+app.use("/api/progress", progressRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+:root {
+  --primary: #2563eb;
+  --secondary: #0f172a;
+  --light: #f8fafc;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
