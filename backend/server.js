@@ -4,8 +4,13 @@ const dotenv = require("dotenv");
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+const quizRoutes = require("./routes/quizRoutes");
 
 dotenv.config();
+
+console.log("MONGO_URI =", process.env.MONGO_URI);
 
 const app = express();
 
@@ -18,6 +23,9 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/quiz", quizRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
