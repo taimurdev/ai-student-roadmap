@@ -8,17 +8,37 @@ import Register from "../pages/Register/Register";
 import Quiz from "../pages/Quiz/Quiz";
 import Roadmap from "../pages/Roadmap/Roadmap";
 
+import ProtectedRoute from "../components/ProtectedRoute";
+
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/quiz" element={<Quiz />} />
-        <Route path="/roadmap" element={<Roadmap />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/quiz"
+          element={
+            <ProtectedRoute>
+              <Quiz />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/roadmap"
+          element={
+            <ProtectedRoute>
+              <Roadmap />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
