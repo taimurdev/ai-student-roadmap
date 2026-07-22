@@ -1,3 +1,5 @@
+import React from "react";
+import { Link } from "react-router-dom";
 import "./Footer.css";
 
 function Footer() {
@@ -16,27 +18,29 @@ function Footer() {
         <div className="footer-section">
           <h3>Quick Links</h3>
           <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-            <li><a href="/login">Login</a></li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+            {/* <li><Link to="/roadmap">My Roadmap</Link></li> */}
+            {/* <li><Link to="/quiz">Assessment Quiz</Link></li> */}
+            <li><Link to="/login">Login</Link></li>
           </ul>
         </div>
 
         <div className="footer-section">
           <h3>Resources</h3>
           <ul>
-            <li>Career Roadmaps</li>
-            <li>Skill Assessment</li>
-            <li>Learning Paths</li>
-            <li>AI Recommendations</li>
+            <li><span>Career Roadmaps</span></li>
+            <li><span>Skill Assessment</span></li>
+            <li><span>Learning Paths</span></li>
+            <li><span>AI Recommendations</span></li>
           </ul>
         </div>
 
         <div className="footer-section">
           <h3>Contact</h3>
-          <p>Email: support@aistudentroadmap.com</p>
-          <p>Phone: +92 300 1234567</p>
+          <p>Email: taimurayaz09@gmail.com</p>
+          <p>Phone: +92 3233444677</p>
           <p>Pakistan</p>
         </div>
 

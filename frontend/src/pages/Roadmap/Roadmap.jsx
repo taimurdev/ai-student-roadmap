@@ -6,22 +6,11 @@ const Roadmap = () => {
   const [roadmap, setRoadmap] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [completedTopics, setCompletedTopics] = useState({});
+  const [completedTopics, setCompletedTopics] = useState([]); // Array format to match backend
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 1. Load saved checkmarks from LocalStorage
-    const savedProgress = localStorage.getItem("roadmap_progress");
-    if (savedProgress) {
-      try {
-        setCompletedTopics(JSON.parse(savedProgress));
-      } catch (e) {
-        console.error("Error parsing saved progress", e);
-      }
-    }
-
-    // 2. Fetch Roadmap Data
-    const fetchRoadmap = async () => {
+    const fetchData = async () => {
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -30,35 +19,62 @@ const Roadmap = () => {
       }
 
       try {
-        const res = await axios.get("http://localhost:5000/api/roadmap", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        // 1. Fetch Roadmap & Progress simultaneously from Backend
+        const [roadmapRes, progressRes] = await Promise.all([
+          axios.get("http://localhost:5000/api/roadmap", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("http://localhost:5000/api/progress", {
+            headers: { Authorization: `Bearer ${token}` },
+          }).catch(() => ({ data: { progress: { completedTopics: [] } } }))
+        ]);
 
-        if (res.data && res.data.roadmap) {
-          setRoadmap(res.data.roadmap);
+        if (roadmapRes.data && roadmapRes.data.roadmap) {
+          setRoadmap(roadmapRes.data.roadmap);
         } else {
           setError("No roadmap data found.");
         }
+
+        // Set progress array from database
+        if (progressRes.data && progressRes.data.progress && progressRes.data.progress.completedTopics) {
+          setCompletedTopics(progressRes.data.progress.completedTopics);
+        }
       } catch (err) {
-        console.error("Fetch Roadmap Error:", err);
+        console.error("Fetch Error:", err);
         setError("No existing roadmap found. Please take the assessment quiz first!");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRoadmap();
+    fetchData();
   }, [navigate]);
 
-  // Toggle Checkbox & Save to LocalStorage
-  const toggleTopic = (phaseIndex, topicIndex) => {
+  // Toggle Checkbox & Sync Array with Backend Database
+  const toggleTopic = async (phaseIndex, topicIndex) => {
     const key = `${phaseIndex}-${topicIndex}`;
-    const updatedState = {
-      ...completedTopics,
-      [key]: !completedTopics[key],
-    };
-    setCompletedTopics(updatedState);
-    localStorage.setItem("roadmap_progress", JSON.stringify(updatedState));
+    
+    let updatedTopics;
+    if (completedTopics.includes(key)) {
+      updatedTopics = completedTopics.filter((item) => item !== key);
+    } else {
+      updatedTopics = [...completedTopics, key];
+    }
+    
+    // Update local state instantly for smooth UI response
+    setCompletedTopics(updatedTopics);
+
+    // Save to Backend Database
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:5000/api/progress",
+        { completedTopics: updatedTopics },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("Error saving progress to backend:", err);
+    }
   };
 
   // Calculate Progress
@@ -69,7 +85,7 @@ const Roadmap = () => {
     roadmap.timeline.forEach((phase, pIdx) => {
       phase.topics?.forEach((_, tIdx) => {
         total++;
-        if (completedTopics[`${pIdx}-${tIdx}`]) done++;
+        if (completedTopics.includes(`${pIdx}-${tIdx}`)) done++;
       });
     });
     return total > 0 ? Math.round((done / total) * 100) : 0;
@@ -216,7 +232,7 @@ const Roadmap = () => {
 
                   <div className="space-y-3">
                     {item.topics?.map((topic, tIdx) => {
-                      const isChecked = !!completedTopics[`${pIdx}-${tIdx}`];
+                      const isChecked = completedTopics.includes(`${pIdx}-${tIdx}`);
                       return (
                         <label
                           key={tIdx}

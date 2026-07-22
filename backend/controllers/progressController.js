@@ -52,7 +52,7 @@ const updateProgress = async (req, res) => {
         progressPercentage,
       },
       {
-        new: true,
+        returnDocument: 'after', // Updated to remove Mongoose deprecation warning
         upsert: true,
       }
     );

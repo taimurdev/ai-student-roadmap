@@ -23,7 +23,11 @@ const questions = [
   {
     id: 3,
     question: "How much time can you commit daily?",
-    options: ["1 - 2 Hours / day", "3 - 5 Hours / day", "Full Time (6+ Hours / day)"],
+    options: [
+      "1 - 2 Hours / day",
+      "3 - 5 Hours / day",
+      "Full Time (6+ Hours / day)",
+    ],
   },
   {
     id: 4,
@@ -49,6 +53,7 @@ const Quiz = () => {
       ...answers,
       [questions[currentStep].id]: option,
     };
+
     setAnswers(updatedAnswers);
 
     if (currentStep < questions.length - 1) {
@@ -63,15 +68,22 @@ const Quiz = () => {
     setErrorMsg("");
 
     const token = localStorage.getItem("token");
+
     if (!token) {
       navigate("/login");
       return;
     }
 
     try {
+      // ==========================
+      // Save Quiz
+      // ==========================
+
       const res = await axios.post(
         "http://localhost:5000/api/quiz",
-        { answers: finalAnswers },
+        {
+          answers: finalAnswers,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,11 +92,28 @@ const Quiz = () => {
         }
       );
 
+      // ==========================
+      // Generate Roadmap
+      // ==========================
+
       if (res.status === 200 || res.status === 201) {
+        await axios.post(
+          "http://localhost:5000/api/roadmap/generate",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        // Redirect to Roadmap
         navigate("/roadmap");
       }
     } catch (err) {
       console.error("Quiz Submission Error:", err);
+
       setErrorMsg(
         err.response?.data?.message ||
           "Failed to submit quiz. Please try again."
@@ -99,11 +128,14 @@ const Quiz = () => {
       <div className="min-h-[85vh] flex flex-col justify-center items-center bg-slate-950 text-white px-4">
         <div className="relative flex items-center justify-center">
           <div className="w-20 h-20 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+
           <span className="absolute text-3xl">🤖</span>
         </div>
+
         <h3 className="text-xl font-bold mt-6 text-white tracking-tight">
           Saving Quiz & Generating Path...
         </h3>
+
         <p className="text-slate-400 text-sm mt-2 animate-pulse text-center max-w-sm">
           Please wait while we set up your customized roadmap.
         </p>
@@ -112,26 +144,30 @@ const Quiz = () => {
   }
 
   const currentQ = questions[currentStep];
-  const progressPercent = Math.round(((currentStep + 1) / questions.length) * 100);
+
+  const progressPercent = Math.round(
+    ((currentStep + 1) / questions.length) * 100
+  );
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 bg-slate-950 text-slate-100 py-12">
       <div className="max-w-xl w-full bg-slate-900/80 backdrop-blur-xl p-8 sm:p-10 rounded-3xl border border-slate-800 shadow-2xl relative overflow-hidden">
-        
-        {/* Glow Element */}
+
+        {/* Glow */}
         <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        {/* Header Badge & Step Progress */}
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider">
             <span>🚀</span> Career Assessment
           </span>
+
           <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
             Question {currentStep + 1} of {questions.length}
           </span>
         </div>
 
-        {/* Progress Bar */}
+        {/* Progress */}
         <div className="w-full h-1.5 bg-slate-800 rounded-full mb-8 overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300"
@@ -145,12 +181,10 @@ const Quiz = () => {
           </div>
         )}
 
-        {/* Question Title */}
         <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-8">
           {currentQ.question}
         </h2>
 
-        {/* Options List */}
         <div className="space-y-3">
           {currentQ.options.map((option, idx) => (
             <button
@@ -158,7 +192,10 @@ const Quiz = () => {
               onClick={() => handleSelectOption(option)}
               className="w-full flex items-center justify-between p-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/60 hover:border-blue-500/50 rounded-2xl text-slate-200 hover:text-white font-medium text-left transition duration-200 group shadow-sm"
             >
-              <span className="text-sm sm:text-base">{option}</span>
+              <span className="text-sm sm:text-base">
+                {option}
+              </span>
+
               <span className="text-slate-500 group-hover:text-blue-400 group-hover:translate-x-1 transition duration-200 text-lg">
                 →
               </span>
@@ -166,7 +203,6 @@ const Quiz = () => {
           ))}
         </div>
 
-        {/* Back Button */}
         {currentStep > 0 && (
           <div className="mt-8 pt-6 border-t border-slate-800 flex justify-start">
             <button
