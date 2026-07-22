@@ -14,13 +14,15 @@ const Register = () => {
 
   const [loading, setLoading] = useState(false);
 
+  // Handle Input Change
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
+  // Handle Register
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -39,8 +41,8 @@ const Register = () => {
 
       alert(response.data.message);
 
+      // Redirect to Login
       navigate("/login");
-
     } catch (error) {
       alert(error.response?.data?.message || "Registration Failed");
     } finally {
@@ -52,7 +54,6 @@ const Register = () => {
     <section className="register">
       <div className="register-container">
         <div className="register-card">
-
           <h1>Create Account</h1>
 
           <p>
@@ -60,9 +61,9 @@ const Register = () => {
           </p>
 
           <form onSubmit={handleSubmit}>
-
             <div className="input-group">
               <label>Full Name</label>
+
               <input
                 type="text"
                 name="fullName"
@@ -74,6 +75,7 @@ const Register = () => {
 
             <div className="input-group">
               <label>Email Address</label>
+
               <input
                 type="email"
                 name="email"
@@ -85,6 +87,7 @@ const Register = () => {
 
             <div className="input-group">
               <label>Password</label>
+
               <input
                 type="password"
                 name="password"
@@ -101,7 +104,6 @@ const Register = () => {
             >
               {loading ? "Creating Account..." : "Register"}
             </button>
-
           </form>
 
           <div className="login-link">
@@ -110,7 +112,6 @@ const Register = () => {
               <Link to="/login">Login</Link>
             </p>
           </div>
-
         </div>
       </div>
     </section>

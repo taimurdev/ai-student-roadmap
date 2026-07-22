@@ -6,64 +6,34 @@ const roadmapSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
-
     career: {
       type: String,
-      required: true,
+      default: "Software Development",
     },
-
     duration: {
       type: String,
-      default: "",
+      default: "6 Months",
     },
-
     difficulty: {
       type: String,
-      default: "",
+      default: "Beginner",
     },
-
     description: {
       type: String,
-      default: "",
+      default: "Personalized learning roadmap",
     },
-
-    skills: [
-      {
-        type: String,
-      },
-    ],
-
-    courses: [
-      {
-        type: String,
-      },
-    ],
-
-    projects: [
-      {
-        type: String,
-      },
-    ],
-
+    skills: [String],
+    courses: [String],
+    projects: [String],
     timeline: [
       {
-        month: {
-          type: String,
-        },
-
-        topics: [
-          {
-            type: String,
-          },
-        ],
+        month: String,
+        topics: [String],
       },
     ],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Roadmap", roadmapSchema);

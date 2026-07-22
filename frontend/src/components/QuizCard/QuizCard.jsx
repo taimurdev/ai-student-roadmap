@@ -1,7 +1,38 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./QuizCard.css";
 
 const QuizCard = () => {
+  const navigate = useNavigate();
+
+  const handleStartAssessment = async () => {
+    const token = localStorage.getItem("token");
+
+    // 1. Agar user logged in nahi hai toh Login page par bhejein
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      // 2. Check karein ki user ka roadmap already exist karta hai ya nahi
+      const res = await axios.get("http://localhost:5000/api/roadmap", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data && res.data.roadmap) {
+        // Agar roadmap mil gaya toh direct Roadmap page par bhejein
+        navigate("/roadmap");
+      } else {
+        // Agar roadmap nahi mil raha toh Quiz page par bhejein
+        navigate("/quiz");
+      }
+    } catch (error) {
+      // Kisi bhi error ya 404 ki surat mein Quiz page par bhej dein
+      navigate("/quiz");
+    }
+  };
+
   return (
     <section className="assessment-section">
       <div className="assessment-container">
@@ -17,11 +48,9 @@ const QuizCard = () => {
             student roadmap.
           </p>
 
-          <Link to="/quiz">
-            <button className="assessment-btn">
-              Start Career Assessment →
-            </button>
-          </Link>
+          <button className="assessment-btn" onClick={handleStartAssessment}>
+            Start Career Assessment →
+          </button>
         </div>
 
         <div className="assessment-info">

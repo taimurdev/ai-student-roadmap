@@ -6,36 +6,13 @@ const quizSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
-
-    answers: [
-      {
-        question: {
-          type: String,
-          required: true,
-        },
-
-        answer: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
-
-    recommendedCareer: {
-      type: String,
-      default: "",
-    },
-
-    score: {
-      type: Number,
-      default: 0,
+    answers: {
+      type: mongoose.Schema.Types.Mixed, // Allows any structure (Object/Array)
+      required: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Quiz", quizSchema);
